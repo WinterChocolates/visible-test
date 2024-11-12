@@ -12,29 +12,26 @@ while true; do
         15 50 5 \
         "0" "刷新环境" \
         "1" "安装node" \
-        "2" "安装mysql" \
-        "3" "安装redis" \
-        "4" "安装pcre" \
-        "5" "安装nginx" \
-        "6" "安装epel-release" \
+        "2" "安装redis" \
+        "3" "安装mysql" \
+        "4" "安装nginx" \
         3>&1 1>&2 2>&3)
     feedback=$?
     if [ $feedback = 0 ]; then
 
 
-        #更新环境
+        # 刷新环境
         if [ $OPTION = 0 ]; then
             source /etc/profile
             ##返回
             read -p "环境已刷新!回车并继续Enter..." Enter
         fi
 
-        #安装
+        # node
         if [ $OPTION = 1 ]; then
 
             node -v
             if [ $? != 0 ]; then
-
                 wget -P "$DIRECTORY" https://repo.huaweicloud.com/nodejs/v$centosNodeV/node-v$centosNodeV-linux-$architecture.tar.gz
                 mkdir "/usr/local/node-v$centosNodeV"
                 tar -xf "$DIRECTORY/node-v$centosNodeV-linux-$architecture.tar.gz" --strip-components 1 -C "/usr/local/node-v$centosNodeV"
@@ -67,66 +64,53 @@ while true; do
             ##依赖
             ln -sfn "/usr/local/node-v$centosNodeV/bin/*" /usr/local/bin
 
-
             ##返回
             read -p "完成机器人环境安装!回车并继续Enter..." Enter
         fi
-
+        
+        # 安装redis
         if [ $OPTION = 2 ]; then
-
-            yum localinstall https://repo.mysql.com//mysql80-community-release-el7-1.noarch.rpm -y
-            rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 
-            yum install mysql-community-server -y
-
-            systemctl start mysqld  # 启动
-            systemctl enable mysqld # 自启动
-
-            read -p "完成数据库安装!回车并继续Enter..." Enter
-
-        fi
-
-        if [ $OPTION = 3 ]; then
-
-
             # 检查是否已经存在 Redis 源代码目录
             if [ ! -d "$AppName/file/redis-$centosRedisV" ]; then
                 cd "$AppName/file"
                 # 下载 Redis
                 wget "http://download.redis.io/releases/redis-$centosRedisV.tar.gz"
                 tar zxvf "redis-$centosRedisV.tar.gz"
-       
             fi
-            
             cd "$AppName/file/redis-$centosRedisV"
-
             # 检查是否已经编译安装 Redis
             if [ ! -x "$AppName/file/redis-$centosRedisV/src/redis-server" ]; then
                 # 编译 Redis
                 make
                 make install
-
             fi
-
             # 启动 Redis 服务
             ./src/redis-server --daemonize yes
-            
             # 设置
             sh  "$AppName/file/redis.sh"
-            
             echo "$AppName/file/redis-$centosRedisV"
-
             read -p "完成数据库安装!回车并继续Enter..." Enter
-
+        fi
+        
+        # mysql
+        if [ $OPTION = 3 ]; then
+            yum install epel-release -y
+            yum install https://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
+            yum-config-manager --enable remi -y
+            yum localinstall https://repo.mysql.com//mysql80-community-release-el7-1.noarch.rpm -y
+            rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 
+            yum install mysql-community-server -y
+            systemctl start mysqld  # 启动
+            systemctl enable mysqld # 自启动
+            read -p "完成数据库安装!回车并继续Enter..." Enter
         fi
 
+        # nginx
         if [ $OPTION = 4 ]; then
-
             #基础环境
             yum install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel -y
-
             # 检查是否已经安装了 pcre
             if [ ! -d "/usr/local/pcre-$centosPcreV" ]; then
-            
                 cd /usr/local
                 wget "http://downloads.sourceforge.net/project/pcre/pcre/$centosPcreV/pcre-$centosPcreV.tar.gz"
                 tar zxvf "pcre-$centosPcreV.tar.gz"
@@ -134,22 +118,11 @@ while true; do
                 ./configure
                 make
                 make install
-
             fi
-            
             cd  "/usr/local/pcre-$centosPcreV"
-
             # 检查
             pcre-config --version
-
             echo "/usr/local/pcre-$centosPcreV"
-
-            read -p "完成/usr/local/pcre安装!回车并继续Enter..." Enter
-
-        fi
-
-        if [ $OPTION = 5 ]; then
-
             # 检查是否已经安装了 nginx
             if [ ! -d "/usr/local/nginx-$centosNginxV" ]; then
 
@@ -160,28 +133,11 @@ while true; do
                 ./configure --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module "--with-pcre=/usr/local/pcre-$centosPcreV"
                 make
                 make install
-
             fi
-
             # 检查
             /usr/local/nginx/sbin/nginx -v
-
             echo "/usr/local/nginx-$centosNginxV"
-
             read -p "完成安装!回车并继续Enter..." Enter
-
-        fi
-
-        if [ $OPTION = 6 ]; then
-
-            yum install epel-release -y
-
-            yum install https://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
-
-            yum-config-manager --enable remi -y
-
-            read -p "完成安装!回车并继续Enter..." Enter
-
         fi
 
         #最后返回

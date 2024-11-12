@@ -1,9 +1,10 @@
 #!/bin/bash
 
+centosRedisV='6.2.13'
 REDIS_USER="redis"
 REDIS_GROUP="redis"
-REDIS_SERVER="/visible/file/redis-6.2.13/redis-server"
-REDIS_CONF="/visible/file/redis-6.2.13/redis.conf"
+REDIS_SERVER="/visible/file/redis-$centosRedisV/redis-server"
+REDIS_CONF="/visible/file/redis-$centosRedisV/redis.conf"
 
 # 创建 Redis systemd 单元文件
 cat > /etc/systemd/system/redis.service <<EOF

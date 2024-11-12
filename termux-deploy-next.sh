@@ -43,10 +43,10 @@ rm -rf chrome-termux
 echo "chrome安装完成"
 
 echo "Install bot"
-git clone --depth=1 https://github.com/yunzai-org/yunzai-next.git     $target_path
+git clone --depth=1 https://github.com/yunzaijs/bot.git     $target_path
 cd $target_path
 # git clone --depth=1  https://gitee.com/ningmengchongshui/miao-plugin ./plugins/miao-plugin
-git clone --depth=1 https://github.com/yunzai-org/yunzai-bot.git
+git clone --depth=1 https://github.com/yunzaijs/bot.git
 cd yunzai-bot
 
 echo "Installing dependencies"
