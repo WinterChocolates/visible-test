@@ -1,6 +1,6 @@
 # Visible
 
-> Centos&&Ubuntu&&debian 系统轻量型图形化工具
+> Linux 系统轻量型图形化工具
 
 UpdateTime:2023/9/26_V2.0
 
@@ -19,9 +19,9 @@ sudo su root
 
 > 1.`Centos`系统初始化 ☞[Centos 详细内容](./centos/README.md)
 
-
 ```sh
-yum update -y && yum install git -y
+yum update -y 
+yum install whiptail git wget curl rsync -y
 ```
 
 >  Ubuntu20.04 
@@ -29,7 +29,8 @@ yum update -y && yum install git -y
 > 2.`Ubuntu`系统初始化 ☞[Ubuntu 详细内容](./ubuntu/README.md)
 
 ```sh
- apt update -y && apt-get install git whiptail -y
+apt update -y
+apt-get install whiptail git wget curl rsync -y
 ```
 
 #### （3）项目拉取
