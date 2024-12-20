@@ -32,14 +32,15 @@ while true; do
 
             node -v
             if [ $? != 0 ]; then
-                wget -P "$DIRECTORY" https://repo.huaweicloud.com/nodejs/v$centosNodeV/node-v$centosNodeV-linux-$architecture.tar.gz
-                mkdir "/usr/local/node-v$centosNodeV"
-                tar -xf "$DIRECTORY/node-v$centosNodeV-linux-$architecture.tar.gz" --strip-components 1 -C "/usr/local/node-v$centosNodeV"
-                echo -e '#node v16.20.0\nexport PATH=/usr/local/node-v16.20.0/bin:$PATH' >/etc/profile.d/node.sh
-                chmod +x /etc/profile.d/node.sh
-                source /etc/profile.d/node.sh
-                ln -sfn "/usr/local/node-v$centosNodeV/bin/*" /usr/local/bin
-                rm -rf "$DIRECTORY/node-v$centosNodeV-linux-$architecture.tar.gz"
+                 =yum install curl -y
+                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+                echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+                echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
+                source ~/.bashrc # 刷新环境
+                NODE_VERSION="18.20.3"
+                nvm install "$NODE_VERSION"
+                nvm use "$NODE_VERSION"
+                npm install yarn@1.19.1 -g --registry=https://registry.npmmirror.com
             fi
 
             if [ ! $(strings /usr/lib64/libstdc++.so.6 | grep 'CXXABI_1.3.8') ]; then
@@ -50,20 +51,43 @@ while true; do
                 ln -s /lib64/libstdc++.so.6.0.26 /lib64/libstdc++.so.6
                 rm -rf "$DIRECTORY"/libstdc-.so.6.0.26
             fi
+           
+            # 安装 Chromium
+            if ! rpm -q chromium &> /dev/null; then
+                sudo yum install chromium -y
+            fi
+            # 安装更多依赖
+            REQUIRED_PACKAGES=(
+              pango.x86_64
+              libXcomposite.x86_64
+              libXcursor.x86_64
+              libXdamage.x86_64
+              libXext.x86_64
+              libXi.x86_64
+              libXtst.x86_64
+              cups-libs.x86_64
+              libXScrnSaver.x86_64
+              libXrandr.x86_64
+              GConf2.x86_64
+              alsa-lib.x86_64
+              atk.x86_64
+              gtk3.x86_64
+              libdrm
+              libgbm
+              libxshmfence
+              nss
+            )
+            for PACKAGE in "${REQUIRED_PACKAGES[@]}"; do
+              if ! rpm -q "$PACKAGE" &> /dev/null; then
+                sudo yum install "$PACKAGE" -y
+              fi
+            done
 
-            ##环境准备
-            yum install pango.x86_64 libXcomposite.x86_64 libXcursor.x86_64 libXdamage.x86_64 libXext.x86_64 libXi.x86_64 libXtst.x86_64 cups-libs.x86_64 libXScrnSaver.x86_64 libXrandr.x86_64 GConf2.x86_64 alsa-lib.x86_64 atk.x86_64 gtk3.x86_64 -y
-            yum install libdrm libgbm libxshmfence -y
-            yum install nss -y
-            yum update nss -y
-            #文字安装
-            yum groupinstall fonts -y
-            #安装Chromium
-            yum  install chromium -y
-
-            ##依赖
-            ln -sfn "/usr/local/node-v$centosNodeV/bin/*" /usr/local/bin
-
+            # 安装 fonts
+            if ! yum group list installed | grep -q "fonts"; then
+                sudo yum groupinstall fonts -y
+            fi
+            
             ##返回
             read -p "完成机器人环境安装!回车并继续Enter..." Enter
         fi
@@ -108,7 +132,7 @@ while true; do
         # nginx
         if [ $OPTION = 4 ]; then
             #基础环境
-            yum install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel -y
+            yum install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel pcre-devel gcc -y
             # 检查是否已经安装了 pcre
             if [ ! -d "/usr/local/pcre-$centosPcreV" ]; then
                 cd /usr/local
@@ -130,7 +154,7 @@ while true; do
                 wget  "http://nginx.org/download/nginx-$centosNginxV.tar.gz"
                 tar zxvf "nginx-$centosNginxV.tar.gz"
                 cd "nginx-$centosNginxV"
-                ./configure --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module "--with-pcre=/usr/local/pcre-$centosPcreV"
+                ./configure --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module "--with-pcre=/usr/local/pcre-8.45" --with-stream
                 make
                 make install
             fi
