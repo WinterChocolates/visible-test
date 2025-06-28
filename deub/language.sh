@@ -2,7 +2,7 @@
 
 source /visible/globals.sh
 
-cd "$DIRECTORY"
+cd "$USER_BASE_DIR"
 
 while true
 do
@@ -18,7 +18,7 @@ do
 	feedback=$?
 	if [ $feedback = 0 ]; then
 		if [ $OPTION = 1 ]; then
-			cd "$DIRECTORY"
+			cd "$USER_BASE_DIR"
 			apt install ttf-wqy-microhei locales -y
 			read -p "已执行Enter回车并继续..." x
 		fi

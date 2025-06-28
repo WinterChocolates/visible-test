@@ -3,7 +3,7 @@
 source /visible/globals.sh
 
 # 检查命令执行是否成功
-check_command() {
+checkCommand() {
     if [ $? -ne 0 ]; then
         echo "命令执行失败: $1"
         exit 1
@@ -11,7 +11,7 @@ check_command() {
 }
 
 # 安装必要的软件包
-install_packages() {
+installPackageBaseBag() {
     REQUIRED_PACKAGES=(
         pango.x86_64
         libXcomposite.x86_64
@@ -36,59 +36,63 @@ install_packages() {
 
     for PACKAGE in "${REQUIRED_PACKAGES[@]}"; do
         if ! rpm -q "$PACKAGE" &>/dev/null; then
-            sudo yum install "$PACKAGE" -y
-            check_command "安装包 $PACKAGE"
+            sudo $CENTOS_PKG_MANAGER install "$PACKAGE" -y
+            checkCommand "安装包 $PACKAGE"
         fi
     done
 }
 
 # 安装 Node.js 和 Yarn
-install_node() {
+installNode() {
     node -v
     if [ $? -ne 0 ]; then
         echo "Node.js 未安装，开始安装 Node.js 和 Yarn..."
 
         # 安装 Node.js 依赖
-        install_packages
+        installPackageBaseBag
 
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
-        check_command "安装 NVM"
+        curl -o- "$NVM_DOWNLOAD_URL" | bash
+        checkCommand "安装 NVM"
 
         echo 'export NVM_DIR="$HOME/.nvm"' >>~/.bashrc
         echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >>~/.bashrc
         source ~/.bashrc
-        check_command "刷新 bashrc"
+        checkCommand "刷新 bashrc"
 
-        NODE_VERSION="18.20.3"
+        # 设置 NVM 的 Node.js 镜像源
+        export NVM_NODEJS_ORG_MIRROR="$NVM_NODEJS_ORG_MIRROR_URL"
+
         nvm install "$NODE_VERSION"
         nvm use "$NODE_VERSION"
-        npm install yarn@1.19.1 -g --registry=https://registry.npmmirror.com
-        check_command "安装 Node.js 和 Yarn"
+        checkCommand "安装 Node.js"
+
+        npm install yarn -g --registry="$NPM_NODEJS_ORG_MIRROR_URL"
+        checkCommand "安装 Node.jsYarn"
     else
         echo "Node.js 已安装，版本：$(node -v)"
     fi
 }
 
 # 安装 Chromium
-install_chromium() {
+installChromium() {
     if ! rpm -q chromium &>/dev/null; then
-        sudo yum install chromium -y
-        check_command "安装 Chromium"
+        sudo $CENTOS_PKG_MANAGER install chromium -y
+        checkCommand "安装 Chromium"
     fi
 }
 
 # 安装 Redis
-install_redis() {
-    REDIS_DIR="$AppName/file/redis-$centosRedisV"
+installRedis() {
+    REDIS_DIR="$APP_DIR/file/redis-$REDIS_VERSION"
 
     # 如果 Redis 目录不存在，下载并解压 Redis
     if [ ! -d "$REDIS_DIR" ]; then
-        cd "$AppName/file"
-        wget "http://download.redis.io/releases/redis-$centosRedisV.tar.gz"
-        check_command "下载 Redis"
-        tar zxvf "redis-$centosRedisV.tar.gz"
-        check_command "解压 Redis"
-        rm -f "redis-$centosRedisV.tar.gz" # 删除下载的 tar 包以节省空间
+        cd "$APP_DIR/file"
+        wget "$REDIS_DOWNLOAD_URL"
+        checkCommand "下载 Redis"
+        tar zxvf "redis-$REDIS_VERSION.tar.gz"
+        checkCommand "解压 Redis"
+        rm -f "redis-$REDIS_VERSION.tar.gz" # 删除下载的 tar 包以节省空间
     fi
 
     cd "$REDIS_DIR"
@@ -96,64 +100,65 @@ install_redis() {
     # 如果 Redis 没有编译安装，执行编译和安装
     if [ ! -x "$REDIS_DIR/src/redis-server" ]; then
         make
-        check_command "编译 Redis"
+        checkCommand "编译 Redis"
         make install
-        check_command "安装 Redis"
+        checkCommand "安装 Redis"
     fi
 
     # 启动 Redis 服务器
     ./src/redis-server --daemonize yes
-    check_command "启动 Redis"
+    checkCommand "启动 Redis"
 
     # 执行 Redis 配置脚本
-    sh "$AppName/file/redis.sh"
+    sh "$APP_DIR/file/redis.sh"
     echo "Redis 安装完成，路径：$REDIS_DIR"
 }
 
 # 安装 MySQL
-install_mysql() {
-    sudo yum install epel-release -y
-    check_command "安装 epel-release"
-    sudo yum install https://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
-    check_command "安装 remi-release"
-    sudo yum-config-manager --enable remi -y
-    sudo yum localinstall https://repo.mysql.com//mysql80-community-release-el7-1.noarch.rpm -y
-    check_command "安装 MySQL 源"
+installMysql() {
+    sudo $CENTOS_PKG_MANAGER install epel-release -y
+    checkCommand "安装 epel-release"
+    sudo $CENTOS_PKG_MANAGER install https://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
+    checkCommand "安装 remi-release"
+    sudo $CENTOS_PKG_MANAGER-config-manager --enable remi -y
+    sudo $CENTOS_PKG_MANAGER localinstall https://repo.mysql.com//mysql80-community-release-el7-1.noarch.rpm -y
+    checkCommand "安装 MySQL 源"
     rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
-    sudo yum install mysql-community-server -y
-    check_command "安装 MySQL"
+    sudo $CENTOS_PKG_MANAGER install mysql-community-server -y
+    checkCommand "安装 MySQL"
     sudo systemctl start mysqld
     sudo systemctl enable mysqld
 }
 
 # 安装 Nginx
-install_nginx() {
-    sudo yum install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel pcre-devel gcc -y
-    check_command "安装 Nginx 依赖包"
+installNginx() {
+    sudo $CENTOS_PKG_MANAGER install $NGINX_DEPENDENCIES -y
 
-    if [ ! -d "/usr/local/pcre-$centosPcreV" ]; then
+    checkCommand "安装 Nginx 依赖包"
+
+    if [ ! -d "/usr/local/pcre-$PCRE_VERSION" ]; then
         cd /usr/local
-        wget "http://downloads.sourceforge.net/project/pcre/pcre/$centosPcreV/pcre-$centosPcreV.tar.gz"
-        tar zxvf "pcre-$centosPcreV.tar.gz"
-        cd "pcre-$centosPcreV"
+        wget "$PRCR_DOWNLOAD_URL"
+        tar zxvf "pcre-$PCRE_VERSION.tar.gz"
+        cd "pcre-$PCRE_VERSION"
         ./configure
         make
         make install
-        check_command "安装 pcre"
+        checkCommand "安装 pcre"
     fi
 
-    cd "/usr/local/pcre-$centosPcreV"
+    cd "/usr/local/pcre-$PCRE_VERSION"
     pcre-config --version
 
-    if [ ! -d "/usr/local/nginx-$centosNginxV" ]; then
+    if [ ! -d "/usr/local/nginx-$NGINX_VERSION" ]; then
         cd /usr/local
-        wget "http://nginx.org/download/nginx-$centosNginxV.tar.gz"
-        tar zxvf "nginx-$centosNginxV.tar.gz"
-        cd "nginx-$centosNginxV"
-        ./configure --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module "--with-pcre=/usr/local/pcre-8.45" --with-stream
+        wget "$NGINX_DOWNLOAD_URL"
+        tar zxvf "nginx-$NGINX_VERSION.tar.gz"
+        cd "nginx-$NGINX_VERSION"
+        ./configure --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module "--with-pcre=/usr/local/$PCRE_VERSION" --with-stream
         make
         make install
-        check_command "安装 Nginx"
+        checkCommand "安装 Nginx"
     fi
 
     if ! which nginx >/dev/null 2>&1; then
@@ -189,23 +194,23 @@ main_menu() {
                 read -p "环境已刷新!回车并继续Enter..." Enter
                 ;;
             1)
-                install_node
+                installNode
                 read -p "Node完成安装!回车并继续Enter..." Enter
                 ;;
             2)
-                install_chromium
+                installChromium
                 read -p "Chromium完成安装!回车并继续Enter..." Enter
                 ;;
             3)
-                install_redis
+                installRedis
                 read -p "Redis完成安装!回车并继续Enter..." Enter
                 ;;
             4)
-                install_mysql
+                installMysql
                 read -p "MySQL完成安装!回车并继续Enter..." Enter
                 ;;
             5)
-                install_nginx
+                installNginx
                 read -p "NGINX完成安装!回车并继续Enter..." Enter
                 ;;
             *)

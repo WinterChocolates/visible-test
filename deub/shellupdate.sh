@@ -2,7 +2,7 @@
 
 source /visible/globals.sh
 
-cd "$DIRECTORY"
+cd "$USER_BASE_DIR"
 
 while true
 do
@@ -16,16 +16,16 @@ do
 	feedback=$?
 	if [ $feedback = 0 ]; then
 		if [ $OPTION = 1 ]; then
-			if [ ! -d "$AppName" ]; then
+			if [ ! -d "$APP_DIR" ]; then
 				cd /
 				git clone "https://github.com/ningmengchongshui/visible.git"
 			fi
 
-			if [ ! -e "$centosIndex" ]; then
-				rm -rf "$AppName"
+			if [ ! -e "$CENTOS_START_BASE" ]; then
+				rm -rf "$APP_DIR"
 				echo "#操作失败了，请重新执行"
 			else
-				cd "$AppName"
+				cd "$APP_DIR"
 				git fetch --all
 				git reset --hard main
 				git pull
@@ -38,7 +38,7 @@ do
 		fi
 		if [ $OPTION = 1 ]; then
 			sudo su root
-			rm -rf "$AppName"
+			rm -rf "$APP_DIR"
 			echo "《visible》"
 			echo "#已卸载应用..."
 			exit 0

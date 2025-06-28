@@ -2,7 +2,7 @@
 
 source /visible/globals.sh
 
-cd "$DIRECTORY"
+cd "$USER_BASE_DIR"
 
 while true
 do

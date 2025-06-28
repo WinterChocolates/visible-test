@@ -5,14 +5,17 @@ source /visible/globals.sh
 # 检查 wget 是否安装，未安装则安装
 wget --version &>/dev/null
 if [ $? != 0 ]; then
-    yum install wget -y
+    $CENTOS_PKG_MANAGER install wget -y
 fi
 
 # 检查 git 是否安装，未安装则安装
 git --version &>/dev/null
 if [ $? != 0 ]; then
-    yum install git -y
+    $CENTOS_PKG_MANAGER install git -y
 fi
+
+ENVIRONMENT_BASH="$centos/selects/environment.sh"
+TOOL_MANAGEMENT_BASH="$centos/selects/shellupdata.sh"
 
 while true; do
     OPTION=$(whiptail \
@@ -28,12 +31,12 @@ while true; do
     if [ $feedback = 0 ]; then
         # 环境部署
         if [ $OPTION = 1 ]; then
-            bash "$centos/environment.sh"
+            bash "$ENVIRONMENT_BASH"
         fi
 
         # 工具管理 (示例功能，具体根据需求修改)
         if [ $OPTION = 2 ]; then
-            bash "$centos/shellupdata.sh"
+            bash "$TOOL_MANAGEMENT_BASH"
         fi
 
         # 系统重启

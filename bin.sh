@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# 支持使用 visible 命令来执行安装脚本
+
 # 检查目录是否存在，不存在则创建
 if [ ! -d "/usr/local/bin" ]; then
     mkdir -p /usr/local/bin

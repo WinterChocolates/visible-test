@@ -2,9 +2,6 @@
 
 source /visible/globals.sh
 
-# 进入
-cd "$DIRECTORY"
-
 while true; do
     OPTION=$(whiptail \
         --title "《Manage》" \
@@ -19,8 +16,8 @@ while true; do
         # 更新
         if [ $OPTION = 1 ]; then
             # 检查目录是否存在，如果不存在则克隆
-            if [ ! -d "$AppName" ]; then
-                echo "目录 $AppName 不存在，正在克隆代码..."
+            if [ ! -d "$APP_DIR" ]; then
+                echo "目录 $APP_DIR 不存在，正在克隆代码..."
                 cd /
                 git clone "https://github.com/ningmengchongshui/visible.git"
                 if [ $? -ne 0 ]; then
@@ -30,11 +27,11 @@ while true; do
             fi
 
             # 检查应用目录是否存在，并进行更新
-            if [ ! -e "$centosIndex" ]; then
+            if [ ! -e "$CENTOS_START_BASE" ]; then
                 echo "# 操作失败，目录不存在或其他问题，请重新执行"
                 exit 1
             else
-                cd "$AppName"
+                cd "$APP_DIR"
                 echo "正在更新《visible》应用..."
                 git fetch --all
                 if [ $? -ne 0 ]; then
@@ -60,7 +57,7 @@ while true; do
             whiptail --title "确认卸载" --yesno "确定要卸载《visible》应用吗?" 10 60
             if [ $? -eq 0 ]; then
                 echo "正在卸载《visible》应用..."
-                sudo rm -rf "$AppName"
+                sudo rm -rf "$APP_DIR"
                 if [ $? -eq 0 ]; then
                     echo "《visible》应用已卸载成功。"
                 else

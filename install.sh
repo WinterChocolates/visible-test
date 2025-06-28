@@ -12,9 +12,9 @@ release=$ID
 
 case $release in
 "rhel" | "centos" | "fedora")
-    bash "$centosIndex"
+    bash "$CENTOS_START_BASE"
     ;;
 "ubuntu" | "debian")
-    bash "$deubIndex"
+    bash "$DEUB_START_BASE"
     ;;
 esac

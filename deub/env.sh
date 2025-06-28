@@ -2,7 +2,7 @@
 
 source /visible/globals.sh
 
-cd "$DIRECTORY"
+cd "$USER_BASE_DIR"
 
 while true
 do
@@ -25,44 +25,44 @@ do
 		fi
 
 		if [ $OPTION = 1 ]; then
-			wget -P "$DIRECTORY" https://repo.huaweicloud.com/nodejs/v$centosNodeV/node-v$centosNodeV-linux-$architecture.tar.gz
-			mkdir "/usr/local/node-v$centosNodeV"
-			tar zxvf "$DIRECTORY/node-v$centosNodeV-linux-$architecture.tar.gz" --strip-components 1 -C "/usr/local/node-v$centosNodeV"
+			wget -P "$USER_BASE_DIR" https://repo.huaweicloud.com/nodejs/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCHITECTURE.tar.gz
+			mkdir "/usr/local/node-v$NODE_VERSION"
+			tar zxvf "$USER_BASE_DIR/node-v$NODE_VERSION-linux-$ARCHITECTURE.tar.gz" --strip-components 1 -C "/usr/local/node-v$NODE_VERSION"
                 	echo -e '#node v16.20.0\nexport PATH=/usr/local/node-v16.20.0/bin:$PATH' >/etc/profile.d/node.sh
 			chmod +x /etc/profile.d/node.sh
 			source /etc/profile.d/node.sh
 			source /etc/profile
-			ln -sfn "/usr/local/node-v$centosNodeV/bin/*" /usr/local/bin
-			rm -rf "$DIRECTORY/node-v$centosNodeV-linux-$architecture.tar.gz"
+			ln -sfn "/usr/local/node-v$NODE_VERSION/bin/*" /usr/local/bin
+			rm -rf "$USER_BASE_DIR/node-v$NODE_VERSION-linux-$ARCHITECTURE.tar.gz"
 			read -p "完成nodejs安装回车并继续Enter..." Enter
 		fi
 
 		if [ $OPTION = 2 ]; then
-			wget -P "$DIRECTORY" https://repo.mysql.com/mysql-apt-config_0.8.30-1_all.deb
-			cd "$DIRECTORY"
+			wget -P "$USER_BASE_DIR" https://repo.mysql.com/mysql-apt-config_0.8.30-1_all.deb
+			cd "$USER_BASE_DIR"
 			dpkg -i mysql-apt-config_0.8.30-1_all.deb
 			apt update -y
 			apt install mysql-server -y
-			rm -rf "$DIRECTORY/mysql-apt-config_0.8.30-1_all.deb"
+			rm -rf "$USER_BASE_DIR/mysql-apt-config_0.8.30-1_all.deb"
 			read -p "完成mysql安装回车并继续Enter..." Enter
 		fi
 
 		if [ $OPTION = 3 ]; then
 			apt install build-essential tcl -y
-			if [ ! -d "$AppName/file/redis-$centosRedisV" ]; then
-				cd "$AppName/file"
-				wget "https://mirrors.huaweicloud.com/redis/redis-$centosRedisV.tar.gz"
-				tar zxvf "redis-$centosRedisV.tar.gz"
+			if [ ! -d "$APP_DIR/file/redis-$REDIS_VERSION" ]; then
+				cd "$APP_DIR/file"
+				wget "https://mirrors.huaweicloud.com/redis/redis-$REDIS_VERSION.tar.gz"
+				tar zxvf "redis-$REDIS_VERSION.tar.gz"
 			fi
 
-			cd "$AppName/file/redis-$centosRedisV"
-			if [ ! -x "$AppName/file/redis-$centosRedisV/src/redis-server" ]; then
+			cd "$APP_DIR/file/redis-$REDIS_VERSION"
+			if [ ! -x "$APP_DIR/file/redis-$REDIS_VERSION/src/redis-server" ]; then
 				make && make install
 			fi
 
 			./src/redis-server --daemonize yes
-			bash "$AppName/file/redis.sh"
-			echo "$AppName/file/redis-$centosRedisV"
+			bash "$APP_DIR/file/redis.sh"
+			echo "$APP_DIR/file/redis-$REDIS_VERSION"
 
 			read -p "完成Redis安装!回车并继续Enter..." Enter
 		fi
@@ -74,19 +74,19 @@ do
 
 		if [ $OPTION = 5 ]; then
 			apt install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev -y
-			if [ ! -d "/usr/local/nginx-$centosNginxV" ]; then
+			if [ ! -d "/usr/local/nginx-$NGINX_VERSION" ]; then
 				cd /usr/local/src
-				wget "http://nginx.org/download/nginx-$centosNginxV.tar.gz"
-				tar zxvf "nginx-$centosNginxV.tar.gz"
-				cd /usr/local/src/nginx-$centosNginxV
+				wget "http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
+				tar zxvf "nginx-$NGINX_VERSION.tar.gz"
+				cd /usr/local/src/nginx-$NGINX_VERSION
 				./configure --prefix=/usr/local/nginx --with-http_gzip_static_module --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module
 				make && make install
 			fi
 			/usr/local/nginx/sbin/nginx -v
-			echo "/usr/local/nginx-$centosNginxV"
+			echo "/usr/local/nginx-$NGINX_VERSION"
 			read -p "完成Nginx安装!回车并继续Enter..." Enter
 		fi
-		cd "$DIRECTORY"
+		cd "$USER_BASE_DIR"
 	else
 		exit
 	fi
