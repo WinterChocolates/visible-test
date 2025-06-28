@@ -2,10 +2,6 @@
 
 > Linux 系统轻量型图形化工具
 
-UpdateTime:2023/9/26_V2.0
-
-> node/chrome/redis/mysql/nginx
-
 ## 一、安装教程
 
 > 若要配置版本或其他设置，可阅读[globals bash](./globals.sh)
