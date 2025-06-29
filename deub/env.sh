@@ -8,7 +8,7 @@ while true
 do
 	OPTION=$(whiptail \
 		--title "《Env Deploy》" \
-		--menu "$version" \
+		--menu "$SYSTEM_VERSION" \
 		15 50 5 \
 		"0" "刷新环境" \
 		"1" "安装node" \

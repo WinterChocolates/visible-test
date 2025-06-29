@@ -14,7 +14,7 @@ while true
 do
 	OPTION=$(whiptail \
 		--title "《visible》" \
-		--menu "${version}" \
+		--menu "$SYSTEM_VERSION" \
 		15 50 6 \
 		"1" "环境部署Env Deploy" \
 		"2" "桌面安装DesktopIns" \

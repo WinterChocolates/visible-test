@@ -6,7 +6,7 @@ while true
 do
 	OPTION=$(whiptail \
 		--title "《Desktop》" \
-		--menu "$version" \
+		--menu "$SYSTEM_VERSION" \
 		15 50 5 \
 		"1" "安装" \
 		3>&1 1>&2 2>&3)

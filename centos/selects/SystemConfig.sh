@@ -204,7 +204,7 @@ main_menu() {
     while true; do
         OPTION=$(whiptail \
             --title "《系统配置 - System Config》" \
-            --menu "$version" \
+            --menu "$SYSTEM_VERSION" \
             20 70 10 \
             "1" "刷新环境变量 Reload Environment" \
             "2" "防火墙管理 Firewall Management" \

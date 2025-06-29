@@ -21,7 +21,7 @@ TOOL_MANAGEMENT_BASH="$centos/selects/shellupdata.sh"
 while true; do
     OPTION=$(whiptail \
         --title "《Visible》" \
-        --menu "$version" \
+        --menu "$SYSTEM_VERSION" \
         20 70 10 \
         "1" "环境部署 Environment" \
         "2" "系统设置 Syten Config" \

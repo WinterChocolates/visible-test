@@ -8,7 +8,7 @@ while true
 do
 	OPTION=$(whiptail \
 		--title "《Manage》" \
-		--menu "$version" \
+		--menu "$SYSTEM_VERSION" \
 		15 50 5 \
 		"1" "工具更新Update" \
 		"2" "工具卸载Uninstall" \

@@ -190,12 +190,12 @@ installDocker() {
         docker-logrotate \
         docker-engine -y
 
-    # 安装依赖包
-    sudo $CENTOS_PKG_MANAGER install -y yum-utils device-mapper-persistent-data lvm2
+    # 使用全局变量安装依赖包
+    sudo $CENTOS_PKG_MANAGER install -y $DOCKER_DEPENDENCIES
     checkCommand "安装 Docker 依赖包"
 
-    # 添加 Docker 官方仓库
-    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    # 使用全局变量添加 Docker 官方仓库
+    sudo yum-config-manager --add-repo "$DOCKER_REPO_URL"
     checkCommand "添加 Docker 仓库"
 
     # 安装 Docker CE
@@ -211,7 +211,7 @@ installDocker() {
     sudo usermod -aG docker $USER
     checkCommand "添加用户到 docker 组"
 
-    # 配置 Docker 镜像加速器（使用阿里云镜像）
+    # 配置 Docker 镜像加速器
     sudo mkdir -p /etc/docker
     sudo tee /etc/docker/daemon.json <<-'EOF'
 {
@@ -252,7 +252,7 @@ main_menu() {
     while true; do
         OPTION=$(whiptail \
             --title "《Environment》" \
-            --menu "$version" \
+            --menu "$SYSTEM_VERSION" \
             20 70 10 \
             "1" "安装node" \
             "2" "安装chromium" \

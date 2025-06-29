@@ -6,7 +6,7 @@ while true
 do
 	OPTION=$(whiptail \
 		--title "《UFW SET》" \
-		--menu "$version" \
+		--menu "$SYSTEM_VERSION" \
 		15 50 5 \
 		"1" "安装" \
 		"2" "状态" \

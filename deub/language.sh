@@ -8,7 +8,7 @@ while true
 do
 	OPTION=$(whiptail \
 		--title "《Language》" \
-		--menu "$version" \
+		--menu "$SYSTEM_VERSION" \
 		15 50 5 \
 		"1" "下载语言Downloadlanguage" \
 		"2" "语言列表Languagelist" \

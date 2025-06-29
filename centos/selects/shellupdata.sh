@@ -5,7 +5,7 @@ source /visible/globals.sh
 while true; do
     OPTION=$(whiptail \
         --title "《Manage》" \
-        --menu "$version" \
+        --menu "$SYSTEM_VERSION" \
         20 70 10 \
         "1" "工具更新 Update" \
         "2" "工具卸载 Uninstall" \
