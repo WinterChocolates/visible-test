@@ -171,6 +171,82 @@ installNginx() {
     fi
 }
 
+# 安装 Docker
+installDocker() {
+    if command -v docker &> /dev/null; then
+        echo "Docker 已安装，版本：$(docker --version)"
+        return 0
+    fi
+
+    echo "Docker 未安装，开始安装 Docker..."
+    
+    # 卸载旧版本
+    sudo $CENTOS_PKG_MANAGER remove docker \
+        docker-client \
+        docker-client-latest \
+        docker-common \
+        docker-latest \
+        docker-latest-logrotate \
+        docker-logrotate \
+        docker-engine -y
+
+    # 安装依赖包
+    sudo $CENTOS_PKG_MANAGER install -y yum-utils device-mapper-persistent-data lvm2
+    checkCommand "安装 Docker 依赖包"
+
+    # 添加 Docker 官方仓库
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    checkCommand "添加 Docker 仓库"
+
+    # 安装 Docker CE
+    sudo $CENTOS_PKG_MANAGER install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+    checkCommand "安装 Docker CE"
+
+    # 启动并启用 Docker 服务
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    checkCommand "启动 Docker 服务"
+
+    # 将当前用户添加到 docker 组
+    sudo usermod -aG docker $USER
+    checkCommand "添加用户到 docker 组"
+
+    # 配置 Docker 镜像加速器（使用阿里云镜像）
+    sudo mkdir -p /etc/docker
+    sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": [
+    "https://mirror.ccs.tencentyun.com",
+    "https://registry.cn-hangzhou.aliyuncs.com",
+    "https://registry.cn-shanghai.aliyuncs.com",
+    "https://registry.cn-beijing.aliyuncs.com",
+    "https://registry.cn-shenzhen.aliyuncs.com",
+    "https://docker.mirrors.ustc.edu.cn",
+    "https://hub-mirror.c.163.com",
+    "https://docker.nju.edu.cn",
+    "https://docker.mirrors.sjtug.sjtu.edu.cn",
+    "https://mirror.baidubce.com",
+    "https://dockerproxy.com"
+  ],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+
+    # 重启 Docker 服务
+    sudo systemctl daemon-reload
+    sudo systemctl restart docker
+    checkCommand "重启 Docker 服务"
+
+    echo "Docker 安装完成！"
+    echo "注意：请重新登录终端以使用户组变更生效，或运行 'newgrp docker'"
+    docker --version
+}
+
 # 主菜单函数
 main_menu() {
     while true; do
@@ -178,21 +254,17 @@ main_menu() {
             --title "《Environment》" \
             --menu "$version" \
             15 50 5 \
-            "0" "刷新环境" \
             "1" "安装node" \
             "2" "安装chromium" \
             "3" "安装redis" \
             "4" "安装mysql" \
             "5" "安装nginx" \
+            "6" "安装docker" \
             3>&1 1>&2 2>&3)
 
         feedback=$?
         if [ $feedback = 0 ]; then
             case $OPTION in
-            0)
-                source /etc/profile
-                read -p "环境已刷新!回车并继续Enter..." Enter
-                ;;
             1)
                 installNode
                 read -p "Node完成安装!回车并继续Enter..." Enter
@@ -212,6 +284,10 @@ main_menu() {
             5)
                 installNginx
                 read -p "NGINX完成安装!回车并继续Enter..." Enter
+                ;;
+            6)
+                installDocker
+                read -p "Docker完成安装!回车并继续Enter..." Enter
                 ;;
             *)
                 exit 1

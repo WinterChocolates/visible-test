@@ -16,6 +16,7 @@ fi
 
 ENVIRONMENT_BASH="$centos/selects/environment.sh"
 TOOL_MANAGEMENT_BASH="$centos/selects/shellupdata.sh"
+SYSTEM_CONFIG_BASH="$centos/selects/SystemConfig.sh"
 
 while true; do
     OPTION=$(whiptail \
@@ -23,8 +24,9 @@ while true; do
         --menu "$version" \
         15 50 3 \
         "1" "环境部署 Environment" \
-        "2" "工具管理 Tool Management" \
-        "3" "系统重启 Restart" \
+        "2" "系统设置 Syten Config" \
+        "2" "脚本管理 Tool Management" \
+        "3" "重启系统 Restart" \
         3>&1 1>&2 2>&3)
 
     feedback=$?
@@ -34,13 +36,16 @@ while true; do
             bash "$ENVIRONMENT_BASH"
         fi
 
-        # 工具管理 (示例功能，具体根据需求修改)
         if [ $OPTION = 2 ]; then
+            bash "$SYSTEM_CONFIG_BASH"
+        fi
+
+        if [ $OPTION = 3 ]; then
             bash "$TOOL_MANAGEMENT_BASH"
         fi
 
         # 系统重启
-        if [ $OPTION = 3 ]; then
+        if [ $OPTION = 4 ]; then
             shutdown -r now
             break # 系统重启后退出脚本
         fi
