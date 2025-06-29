@@ -15,8 +15,8 @@ if [ $? != 0 ]; then
 fi
 
 ENVIRONMENT_BASH="$centos/selects/environment.sh"
-TOOL_MANAGEMENT_BASH="$centos/selects/shellupdata.sh"
 SYSTEM_CONFIG_BASH="$centos/selects/SystemConfig.sh"
+TOOL_MANAGEMENT_BASH="$centos/selects/shellupdata.sh"
 
 while true; do
     OPTION=$(whiptail \
@@ -26,7 +26,7 @@ while true; do
         "1" "环境部署 Environment" \
         "2" "系统设置 Syten Config" \
         "3" "脚本管理 Tool Management" \
-        "3" "重启系统 Restart" \
+        "4" "重启系统 Restart" \
         3>&1 1>&2 2>&3)
 
     feedback=$?
