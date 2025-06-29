@@ -22,10 +22,10 @@ while true; do
     OPTION=$(whiptail \
         --title "《Visible》" \
         --menu "$version" \
-        15 50 3 \
+        20 70 10 \
         "1" "环境部署 Environment" \
         "2" "系统设置 Syten Config" \
-        "2" "脚本管理 Tool Management" \
+        "3" "脚本管理 Tool Management" \
         "3" "重启系统 Restart" \
         3>&1 1>&2 2>&3)
 

@@ -253,7 +253,7 @@ main_menu() {
         OPTION=$(whiptail \
             --title "《Environment》" \
             --menu "$version" \
-            15 50 5 \
+            20 70 10 \
             "1" "安装node" \
             "2" "安装chromium" \
             "3" "安装redis" \

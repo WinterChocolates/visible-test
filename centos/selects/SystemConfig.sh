@@ -206,15 +206,15 @@ main_menu() {
             --title "《系统配置 - System Config》" \
             --menu "$version" \
             20 70 10 \
-            "1" "刷新环境变量" \
-            "2" "防火墙管理" \
-            "3" "系统服务管理" \
-            "4" "时间同步设置" \
-            "5" "系统信息查看" \
-            "6" "防火墙状态" \
-            "7" "端口管理" \
-            "8" "关闭防火墙" \
-            "9" "启用防火墙" \
+            "1" "刷新环境变量 Reload Environment" \
+            "2" "防火墙管理 Firewall Management" \
+            "3" "系统服务管理 Service Management" \
+            "4" "时间同步设置 Time Synchronization" \
+            "5" "系统信息查看 System Information" \
+            "6" "防火墙状态 Firewall Status" \
+            "7" "端口管理 Port Management" \
+            "8" "关闭防火墙 Disable Firewall" \
+            "9" "启用防火墙 Enable Firewall" \
             3>&1 1>&2 2>&3)
 
         feedback=$?
