@@ -68,7 +68,7 @@ readonly NGINX_DOWNLOAD_URL="http://nginx.org/download/nginx-$NGINX_VERSION.tar.
 # nginx依赖
 readonly NGINX_DEPENDENCIES="make zlib zlib-devel gcc-c++ libtool openssl openssl-devel pcre-devel gcc"
 # PCRE 下载地址
-readonly PRCR_DOWNLOAD_URL="http://downloads.sourceforge.net/project/pcre/pcre/$PCRE_VERSION/pcre-$PCRE_VERSION.tar.gz"
+readonly PCRR_DOWNLOAD_URL="http://downloads.sourceforge.net/project/pcre/pcre/$PCRE_VERSION/pcre-$PCRE_VERSION.tar.gz"
 
 # Docker 官方仓库地址
 readonly DOCKER_REPO_URL="https://download.docker.com/linux/centos/docker-ce.repo"

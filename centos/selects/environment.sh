@@ -138,7 +138,7 @@ installNginx() {
 
     if [ ! -d "/usr/local/pcre-$PCRE_VERSION" ]; then
         cd /usr/local
-        wget "$PRCR_DOWNLOAD_URL"
+        wget "$PCRR_DOWNLOAD_URL"
         tar zxvf "pcre-$PCRE_VERSION.tar.gz"
         cd "pcre-$PCRE_VERSION"
         ./configure
