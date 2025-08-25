@@ -54,6 +54,7 @@ readonly NVM_VERSION='0.40.3'
 # 包管理器
 # readonly CENTOS_PKG_MANAGER='yum' # 适用于 CentOS 7
 readonly CENTOS_PKG_MANAGER='dnf' # 适用于 CentOS 8 及以上版本
+readonly DEUB_PKG_MANAGER='apt-get' # 适用于 Ubuntu/Debian
 
 # NVM 下载地址
 readonly NVM_DOWNLOAD_URL="https://raw.githubusercontent.com/nvm-sh/nvm/v$NVM_VERSION/install.sh"
@@ -67,6 +68,8 @@ readonly REDIS_DOWNLOAD_URL="http://download.redis.io/releases/redis-$REDIS_VERS
 readonly NGINX_DOWNLOAD_URL="http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
 # nginx依赖
 readonly NGINX_DEPENDENCIES="make zlib zlib-devel gcc-c++ libtool openssl openssl-devel pcre-devel gcc"
+# NGINX DEUB 依赖
+readonly NGINX_DEUB_DEPENDENCIES="build-essential zlib1g-dev g++ libpcre3-dev openssl libssl-dev"
 # PCRE 下载地址
 readonly PCRR_DOWNLOAD_URL="http://downloads.sourceforge.net/project/pcre/pcre/$PCRE_VERSION/pcre-$PCRE_VERSION.tar.gz"
 
@@ -75,6 +78,8 @@ readonly DOCKER_REPO_URL="https://download.docker.com/linux/centos/docker-ce.rep
 
 # Docker 依赖包
 readonly DOCKER_DEPENDENCIES="yum-utils device-mapper-persistent-data lvm2"
+# Docker DEUB 依赖包
+readonly DOCKER_DEUB_DEPENDENCIES="apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common"
 
 # 用户（计划废弃）
 readonly USER_BASE_DIR="/home/lighthouse"
