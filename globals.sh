@@ -17,10 +17,10 @@ readonly centos="/visible/centos"
 readonly CENTOS_START_BASE="$APP_DIR/centos/index.sh"
 
 # Ubuntu/Debian 目录
-readonly deub="/visible/deub"
+readonly debian="/visible/debian"
 
 # Ubuntu/Debian 启动脚本
-readonly DEUB_START_BASE="$APP_DIR/deub/index.sh"
+readonly DEUB_START_BASE="$APP_DIR/debian/index.sh"
 
 # 架构
 ARCHITECTURE=""
@@ -62,7 +62,7 @@ readonly NVM_DOWNLOAD_URL="https://raw.githubusercontent.com/nvm-sh/nvm/v$NVM_VE
 readonly NVM_NODEJS_ORG_MIRROR_URL="https://npmmirror.com/mirrors/node"
 # NPM 镜像源
 readonly NPM_NODEJS_ORG_MIRROR_URL="https://registry.npmmirror.com"
-# Node.js 镜像源
+# Redis 镜像源
 readonly REDIS_DOWNLOAD_URL="http://download.redis.io/releases/redis-$REDIS_VERSION.tar.gz"
 # Nginx 下载地址
 readonly NGINX_DOWNLOAD_URL="http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
