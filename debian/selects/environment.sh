@@ -67,7 +67,7 @@ installRedis() {
     cd "$REDIS_DIR"
 
     # 安装编译工具
-    $DEUB_PKG_MANAGER install $NGINX_DEUB_DEPENDENCIES -y
+    $DEUB_PKG_MANAGER install $NGINX_DEPENDENCIES -y
 
     # 如果 Redis 没有编译安装，执行编译和安装
     if [ ! -f "$REDIS_DIR/src/redis-server" ]; then
@@ -103,7 +103,7 @@ installMySQL() {
 
 # 安装 Nginx
 installNginx() {
-    $DEUB_PKG_MANAGER install $NGINX_DEUB_DEPENDENCIES -y
+    $DEUB_PKG_MANAGER install $NGINX_DEPENDENCIES -y
 
     checkCommand "安装 Nginx 依赖包"
 
@@ -155,7 +155,7 @@ installDocker() {
     sudo $DEUB_PKG_MANAGER remove docker docker-engine docker.io containerd runc -y
 
     # 安装依赖包
-    $DEUB_PKG_MANAGER install $DOCKER_DEUB_DEPENDENCIES tee -y
+    $DEUB_PKG_MANAGER install $DOCKER_DEPENDENCIES tee -y
     checkCommand "安装 Docker 依赖包"
 
     # 添加 Docker 官方 GPG 密钥 和 Docker CE 镜像源（清华）

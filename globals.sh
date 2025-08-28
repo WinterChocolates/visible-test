@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ -f /etc/os-release ] && . /etc/os-release || exit 1
+
 # 应用目录
 readonly APP_DIR="/visible"
 
@@ -7,7 +9,6 @@ readonly APP_DIR="/visible"
 readonly APP_NAME="visible"
 
 # 系统版本
-. /etc/os-release
 readonly SYSTEM_VERSION=$NAME
 
 # 可见目录
@@ -51,10 +52,30 @@ readonly PCRE_VERSION='8.45'
 readonly NGINX_VERSION='1.24.0'
 readonly NVM_VERSION='0.40.3'
 
+# 统一常量名称
+if [[ "$ID" == "centos" ]]; then
+    # 包管理器
+    readonly PKG_MANAGER='dnf'  # 适用于 CentOS 8 及以上版本
+    # nginx依赖
+    readonly NGINX_DEPENDENCIES="make zlib zlib-devel gcc-c++ libtool openssl openssl-devel pcre-devel gcc"
+    # Docker 依赖包
+    readonly DOCKER_DEPENDENCIES="yum-utils device-mapper-persistent-data lvm2"
+elif [[ "$ID" == "ubuntu" || "$ID" == "debian" ]]; then
+    # 包管理器
+    readonly PKG_MANAGER='apt'  # 适用于 Ubuntu/Debian
+    # nginx依赖
+    readonly NGINX_DEPENDENCIES="build-essential zlib1g-dev g++ libpcre3-dev openssl libssl-dev"
+    # Docker 依赖包
+    readonly DOCKER_DEPENDENCIES="apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common"
+else
+    echo "不支持的系统: $ID"
+    exit 1
+fi
+
 # 包管理器
 # readonly CENTOS_PKG_MANAGER='yum' # 适用于 CentOS 7
-readonly CENTOS_PKG_MANAGER='dnf' # 适用于 CentOS 8 及以上版本
-readonly DEUB_PKG_MANAGER='apt-get' # 适用于 Ubuntu/Debian
+# readonly CENTOS_PKG_MANAGER='dnf' # 适用于 CentOS 8 及以上版本
+# readonly DEUB_PKG_MANAGER='apt-get' # 适用于 Ubuntu/Debian
 
 # NVM 下载地址
 readonly NVM_DOWNLOAD_URL="https://raw.githubusercontent.com/nvm-sh/nvm/v$NVM_VERSION/install.sh"
@@ -67,9 +88,9 @@ readonly REDIS_DOWNLOAD_URL="http://download.redis.io/releases/redis-$REDIS_VERS
 # Nginx 下载地址
 readonly NGINX_DOWNLOAD_URL="http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
 # nginx依赖
-readonly NGINX_DEPENDENCIES="make zlib zlib-devel gcc-c++ libtool openssl openssl-devel pcre-devel gcc"
+# readonly NGINX_DEPENDENCIES="make zlib zlib-devel gcc-c++ libtool openssl openssl-devel pcre-devel gcc"
 # NGINX DEUB 依赖
-readonly NGINX_DEUB_DEPENDENCIES="build-essential zlib1g-dev g++ libpcre3-dev openssl libssl-dev"
+# readonly NGINX_DEUB_DEPENDENCIES="build-essential zlib1g-dev g++ libpcre3-dev openssl libssl-dev"
 # PCRE 下载地址
 readonly PCRR_DOWNLOAD_URL="http://downloads.sourceforge.net/project/pcre/pcre/$PCRE_VERSION/pcre-$PCRE_VERSION.tar.gz"
 
@@ -77,9 +98,9 @@ readonly PCRR_DOWNLOAD_URL="http://downloads.sourceforge.net/project/pcre/pcre/$
 readonly DOCKER_REPO_URL="https://download.docker.com/linux/centos/docker-ce.repo"
 
 # Docker 依赖包
-readonly DOCKER_DEPENDENCIES="yum-utils device-mapper-persistent-data lvm2"
+# readonly DOCKER_DEPENDENCIES="yum-utils device-mapper-persistent-data lvm2"
 # Docker DEUB 依赖包
-readonly DOCKER_DEUB_DEPENDENCIES="apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common"
+# readonly DOCKER_DEUB_DEPENDENCIES="apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common"
 
 # 用户（计划废弃）
 readonly USER_BASE_DIR="/home/lighthouse"
